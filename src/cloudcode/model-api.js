@@ -8,13 +8,13 @@ import { ANTIGRAVITY_ENDPOINT_FALLBACKS, ANTIGRAVITY_HEADERS, getModelFamily } f
 import { logger } from '../utils/logger.js';
 
 /**
- * Check if a model is supported (Claude or Gemini)
+ * Check if a model is supported (Claude, Gemini, GPT OSS)
  * @param {string} modelId - Model ID to check
  * @returns {boolean} True if model is supported
  */
 function isSupportedModel(modelId) {
     const family = getModelFamily(modelId);
-    return family === 'claude' || family === 'gemini';
+    return family === 'claude' || family === 'gemini' || family === 'gpt';
 }
 
 /**
@@ -36,7 +36,7 @@ export async function listModels(token) {
         id: modelId,
         object: 'model',
         created: Math.floor(Date.now() / 1000),
-        owned_by: 'anthropic',
+        owned_by: modelId.includes('claude') ? 'anthropic' : modelId.includes('gemini') ? 'google' : 'openai',
         description: modelData.displayName || modelId
     }));
 
@@ -97,7 +97,7 @@ export async function getModelQuotas(token) {
 
     const quotas = {};
     for (const [modelId, modelData] of Object.entries(data.models)) {
-        // Only include Claude and Gemini models
+        // Only include supported model families
         if (!isSupportedModel(modelId)) continue;
 
         if (modelData.quotaInfo) {

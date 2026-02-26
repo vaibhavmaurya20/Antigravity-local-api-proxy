@@ -137,13 +137,16 @@ node bin/cli.js accounts list
 
 ### Available Models
 
-The proxy supports all Claude models:
+The proxy supports the latest Antigravity model lineup:
 
-- `claude-3-5-sonnet-20241022` - Latest, most capable model
-- `claude-3-5-haiku-20241022` - Fast, cost-effective model  
-- `claude-3-opus-20240229` - Most powerful for complex tasks
-- `claude-3-sonnet-20240229` - Balanced performance
-- `claude-3-haiku-20240307` - Fastest, most cost-effective
+- `gemini-3-1-pro-high` - Gemini 3.1 Pro (high)
+- `gemini-3-1-pro-low` - Gemini 3.1 Pro (low)
+- `gemini-3-flash` - Gemini 3 Flash
+- `claude-sonnet-4-5-thinking` - Claude Sonnet 4.5 (thinking)
+- `claude-opus-4-5-thinking` - Claude Opus 4.5 (thinking)
+- `claude-sonnet-4-6-thinking` - Claude Sonnet 4.6 (thinking)
+- `claude-opus-4-6-thinking` - Claude Opus 4.6 (thinking)
+- `gpt-oss-120b` - GPT-OSS-120b
 
 ### Switching Models
 
@@ -159,7 +162,7 @@ The proxy supports all Claude models:
 
 ```bash
 curl -X POST http://localhost:3000/api/chat   -H "Content-Type: application/json"   -d '{
-    "model": "claude-3-5-sonnet-20241022",
+    "model": "claude-sonnet-4-6-thinking",
     "messages": [
       {
         "role": "user",
@@ -174,7 +177,7 @@ curl -X POST http://localhost:3000/api/chat   -H "Content-Type: application/json
 
 ```bash
 # Set default model
-node bin/cli.js config set defaultModel "claude-3-5-sonnet-20241022"
+node bin/cli.js config set defaultModel "claude-sonnet-4-6-thinking"
 
 # List available models
 node bin/cli.js models list
@@ -199,7 +202,7 @@ The proxy implements intelligent model selection:
 ```bash
 # Send a simple message
 curl -X POST http://localhost:3000/api/chat   -H "Content-Type: application/json"   -d '{
-    "model": "claude-3-5-sonnet-20241022",
+    "model": "claude-sonnet-4-6-thinking",
     "messages": [
       {
         "role": "user", 
@@ -215,7 +218,7 @@ curl -X POST http://localhost:3000/api/chat   -H "Content-Type: application/json
 ```bash
 # Enable streaming for real-time responses
 curl -X POST http://localhost:3000/api/chat   -H "Content-Type: application/json"   -H "Accept: text/event-stream"   -d '{
-    "model": "claude-3-5-sonnet-20241022",
+    "model": "claude-sonnet-4-6-thinking",
     "messages": [{"role": "user", "content": "Count to 10 slowly"}],
     "max_tokens": 100,
     "stream": true
@@ -247,7 +250,7 @@ fetch('http://localhost:3000/api/chat', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    model: "claude-3-5-sonnet-20241022",
+    model: "claude-sonnet-4-6-thinking",
     messages: conversation,
     max_tokens: 200
   })
@@ -261,7 +264,7 @@ fetch('http://localhost:3000/api/chat', {
 node bin/cli.js chat "Explain quantum computing in simple terms"
 
 # Send with specific model
-node bin/cli.js chat --model "claude-3-haiku-20240307" "What is the weather like?"
+node bin/cli.js chat --model "gemini-3-flash" "What is the weather like?"
 
 # Interactive chat mode
 node bin/cli.js chat --interactive
@@ -289,12 +292,12 @@ node bin/cli.js logs --tail
 ```json
 {
   "models": {
-    "claude-3-5-sonnet-20241022": {
+    "claude-sonnet-4-6-thinking": {
       "maxTokens": 8192,
       "temperature": 0.7,
       "topP": 1.0
     },
-    "claude-3-haiku-20240307": {
+    "gemini-3-flash": {
       "maxTokens": 4096,
       "temperature": 0.5,
       "topP": 1.0
@@ -546,7 +549,7 @@ Main chat completion endpoint.
 **Request Body:**
 ```json
 {
-  "model": "claude-3-5-sonnet-20241022",
+  "model": "claude-sonnet-4-6-thinking",
   "messages": [
     {"role": "user", "content": "Hello!"}
   ],
@@ -560,7 +563,7 @@ Main chat completion endpoint.
 ```json
 {
   "id": "msg_12345",
-  "model": "claude-3-5-sonnet-20241022",
+  "model": "claude-sonnet-4-6-thinking",
   "content": "Hello! How can I help you today?",
   "usage": {
     "input_tokens": 10,
@@ -577,8 +580,8 @@ List available models.
 ```json
 {
   "models": [
-    {"id": "claude-3-5-sonnet-20241022", "name": "Claude 3.5 Sonnet"},
-    {"id": "claude-3-haiku-20240307", "name": "Claude 3 Haiku"}
+    {"id": "claude-sonnet-4-6-thinking", "name": "Claude Sonnet 4.6 (thinking)"},
+    {"id": "gemini-3-flash", "name": "Gemini 3 Flash"}
   ]
 }
 ```

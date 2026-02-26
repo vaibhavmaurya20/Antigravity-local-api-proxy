@@ -171,6 +171,7 @@ document.addEventListener('alpine:init', () => {
             const lower = modelId.toLowerCase();
             if (lower.includes('claude')) return 'claude';
             if (lower.includes('gemini')) return 'gemini';
+            if (/\bgpt(?:-|_|\b)/.test(lower) || lower.includes('gpt-oss')) return 'gpt';
             return 'other';
         },
 

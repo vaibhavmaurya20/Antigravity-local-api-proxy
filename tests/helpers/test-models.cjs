@@ -7,13 +7,13 @@
 
 // Default test models for each family
 const TEST_MODELS = {
-    claude: 'claude-sonnet-4-5-thinking',
+    claude: 'claude-sonnet-4-6-thinking',
     gemini: 'gemini-3-flash'
 };
 
 // Default thinking model for each family
 const THINKING_MODELS = {
-    claude: 'claude-sonnet-4-5-thinking',
+    claude: 'claude-sonnet-4-6-thinking',
     gemini: 'gemini-3-flash'
 };
 
