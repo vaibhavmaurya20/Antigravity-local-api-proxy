@@ -15,7 +15,7 @@ import { config } from './config.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { forceRefresh } from './auth/token-extractor.js';
-import { REQUEST_BODY_LIMIT } from './constants.js';
+import { DEFAULT_MODEL, REQUEST_BODY_LIMIT } from './constants.js';
 import { AccountManager } from './account-manager/index.js';
 import { formatDuration } from './utils/helpers.js';
 import { logger } from './utils/logger.js';
@@ -567,9 +567,22 @@ app.post('/v1/messages', async (req, res) => {
         // Ensure account manager is initialized
         await ensureInitialized();
 
+        const {
+            model,
+            messages,
+            max_tokens,
+            stream,
+            system,
+            tools,
+            tool_choice,
+            thinking,
+            top_p,
+            top_k,
+            temperature
+        } = req.body || {};
 
         // Resolve model mapping if configured
-        let requestedModel = model || 'claude-3-5-sonnet-20241022';
+        let requestedModel = model || DEFAULT_MODEL;
         const modelMapping = config.modelMapping || {};
         if (modelMapping[requestedModel] && modelMapping[requestedModel].mapping) {
             const targetModel = modelMapping[requestedModel].mapping;

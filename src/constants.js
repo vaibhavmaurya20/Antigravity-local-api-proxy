@@ -7,6 +7,9 @@ import { homedir, platform, arch } from 'os';
 import { join } from 'path';
 import { config } from './config.js';
 
+const PLACEHOLDER_CLIENT_ID = 'YOUR_GOOGLE_OAUTH_CLIENT_ID';
+const PLACEHOLDER_CLIENT_SECRET = 'YOUR_GOOGLE_OAUTH_CLIENT_SECRET';
+
 /**
  * Get the Antigravity database path based on the current platform.
  * - macOS: ~/Library/Application Support/Antigravity/...
@@ -76,15 +79,9 @@ export const ACCOUNT_CONFIG_PATH = config?.accountConfigPath || join(
 // Uses platform-specific path detection
 export const ANTIGRAVITY_DB_PATH = getAntigravityDbPath();
 
-<<<<<<< HEAD
 export const DEFAULT_COOLDOWN_MS = config?.defaultCooldownMs || (60 * 1000); // From config or 1 minute
 export const MAX_RETRIES = config?.maxRetries || 5; // From config or 5
 export const MAX_ACCOUNTS = config?.maxAccounts || 10; // From config or 10
-=======
-export const DEFAULT_COOLDOWN_MS = 10 * 1000; // 10 second default cooldown
-export const MAX_RETRIES = 5; // Max retry attempts across accounts
-export const MAX_ACCOUNTS = 10; // Maximum number of accounts allowed
->>>>>>> 5b70b77 (Changed default cooldown time to 10 seconds)
 
 // Rate limit wait thresholds
 export const MAX_WAIT_BEFORE_ERROR_MS = config?.maxWaitBeforeErrorMs || 120000; // From config or 2 minutes
@@ -106,12 +103,13 @@ export const GEMINI_SIGNATURE_CACHE_TTL_MS = 2 * 60 * 60 * 1000;
 /**
  * Get the model family from model name (dynamic detection, no hardcoded list).
  * @param {string} modelName - The model name from the request
- * @returns {'claude' | 'gemini' | 'unknown'} The model family
+ * @returns {'claude' | 'gemini' | 'gpt' | 'unknown'} The model family
  */
 export function getModelFamily(modelName) {
     const lower = (modelName || '').toLowerCase();
     if (lower.includes('claude')) return 'claude';
     if (lower.includes('gemini')) return 'gemini';
+    if (/\bgpt(?:-|_|\b)/.test(lower) || lower.includes('gpt-oss')) return 'gpt';
     return 'unknown';
 }
 
@@ -134,12 +132,13 @@ export function isThinkingModel(modelName) {
     return false;
 }
 
+// Default model used when client does not provide one
+export const DEFAULT_MODEL = 'claude-sonnet-4-6-thinking';
+
 // Google OAuth configuration (from opencode-antigravity-auth)
+export const OAUTH_CONFIG = {
     clientId: process.env.GOOGLE_CLIENT_ID || PLACEHOLDER_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || PLACEHOLDER_CLIENT_SECRET,
-    clientId: process.env.GOOGLE_CLIENT_ID || PLACEHOLDER_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || PLACEHOLDER_CLIENT_SECRET,
-    clientSecret: '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',
     authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',
     userInfoUrl: 'https://www.googleapis.com/oauth2/v1/userinfo',
@@ -156,12 +155,14 @@ export const OAUTH_REDIRECT_URI = `http://localhost:${OAUTH_CONFIG.callbackPort}
 
 // Model fallback mapping - maps primary model to fallback when quota exhausted
 export const MODEL_FALLBACK_MAP = {
-    'gemini-3-pro-high': 'claude-opus-4-5-thinking',
-    'gemini-3-pro-low': 'claude-sonnet-4-5',
+    'gemini-3-1-pro-high': 'claude-opus-4-6-thinking',
+    'gemini-3-1-pro-low': 'claude-sonnet-4-6-thinking',
     'gemini-3-flash': 'claude-sonnet-4-5-thinking',
-    'claude-opus-4-5-thinking': 'gemini-3-pro-high',
+    'claude-opus-4-6-thinking': 'gemini-3-1-pro-high',
+    'claude-sonnet-4-6-thinking': 'gemini-3-1-pro-low',
+    'claude-opus-4-5-thinking': 'gemini-3-1-pro-high',
     'claude-sonnet-4-5-thinking': 'gemini-3-flash',
-    'claude-sonnet-4-5': 'gemini-3-flash'
+    'gpt-oss-120b': 'gemini-3-flash'
 };
 
 export default {
@@ -182,6 +183,7 @@ export default {
     GEMINI_MAX_OUTPUT_TOKENS,
     GEMINI_SKIP_SIGNATURE,
     GEMINI_SIGNATURE_CACHE_TTL_MS,
+    DEFAULT_MODEL,
     getModelFamily,
     isThinkingModel,
     OAUTH_CONFIG,

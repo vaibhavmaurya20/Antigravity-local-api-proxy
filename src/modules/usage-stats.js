@@ -13,12 +13,13 @@ let isDirty = false;
 /**
  * Extract model family from model ID
  * @param {string} modelId - The model identifier (e.g., "claude-opus-4-5-thinking")
- * @returns {string} The family name (claude, gemini, or other)
+ * @returns {string} The family name (claude, gemini, gpt, or other)
  */
 function getFamily(modelId) {
     const lower = (modelId || '').toLowerCase();
     if (lower.includes('claude')) return 'claude';
     if (lower.includes('gemini')) return 'gemini';
+    if (/\bgpt(?:-|_|\b)/.test(lower) || lower.includes('gpt-oss')) return 'gpt';
     return 'other';
 }
 

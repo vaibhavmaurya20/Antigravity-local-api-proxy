@@ -15,7 +15,7 @@ const { getModelConfig } = require('./helpers/test-models.cjs');
 const tools = [commonTools.executeCommand];
 
 // Test models
-const CLAUDE_MODEL = 'claude-sonnet-4-5-thinking';
+const CLAUDE_MODEL = 'claude-sonnet-4-6-thinking';
 const GEMINI_MODEL = 'gemini-3-flash';
 
 async function testClaudeToGemini() {
